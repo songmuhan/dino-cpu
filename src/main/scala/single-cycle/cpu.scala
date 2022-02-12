@@ -37,6 +37,12 @@ class SingleCycleCPU(implicit val conf: CPUConfig) extends BaseCPU {
   io.imem.valid := true.B
 
   val instruction = io.imem.instruction
+  val instruction = Wire(UInt(32.W))
+  when ((pc % 8.U) === 4.U) {
+    instruction := io.imem.instruction(63, 32)
+  } .otherwise {
+    instruction := io.imem.instruction(31, 0)
+  }
 
   // Your code goes here
 }
