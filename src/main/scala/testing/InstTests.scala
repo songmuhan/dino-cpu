@@ -576,7 +576,7 @@ object InstTests {
             Map(5 -> 1, 10 -> 6),
             Map(), Map()),
         CPUTestCase("ldfwd",
-            Map("single-cycle" -> 2, "pipelined" -> 7, "pipelined-non-combin" -> 70),
+            Map("single-cycle" -> 2, "pipelined" -> 7, "pipelined-non-combin" -> 70, "pipelined-dual-issue" -> 7),
             Map(5 -> BigInt("ffffffffffffffff", 16), 10 -> 5),
             Map(5 -> 1, 10 -> 6),
             Map(), Map()),
