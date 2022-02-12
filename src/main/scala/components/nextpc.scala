@@ -33,8 +33,27 @@ class NextPC extends Module {
     val taken    = Output(Bool())
   })
 
-  io.nextpc := io.pc + 4.U
-  io.taken  := false.B
+  when (io.branch) {
+    when ( (io.funct3 === "b000".U & io.inputx === io.inputy)
+         | (io.funct3 === "b001".U & io.inputx =/= io.inputy)
+         | (io.funct3 === "b100".U & io.inputx.asSInt < io.inputy.asSInt)
+         | (io.funct3 === "b101".U & io.inputx.asSInt >= io.inputy.asSInt)
+         | (io.funct3 === "b110".U & io.inputx < io.inputy)
+         | (io.funct3 === "b111".U & io.inputx >= io.inputy)) {
+      io.nextpc := io.pc + io.imm
+      io.taken := true.B
+    }
+    .otherwise {
+      io.nextpc := io.pc + 4.U
+      io.taken := false.B
+    }
+  } .elsewhen (io.jumptype =/= 0.U) {
+    io.nextpc := Mux(io.jumptype(0), io.inputx + io.imm, // jalr
+                                     io.pc + io.imm)     // jal
+    io.taken := true.B
+  } .otherwise {
+    io.nextpc := io.pc + 4.U
+    io.taken := false.B
+  }
 
-  // Your code goes here
 }

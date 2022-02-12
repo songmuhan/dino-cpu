@@ -523,7 +523,7 @@ object InstTests {
                                 Map(5 -> BigInt("05060708", 16)),
                                 Map(), Map()),
         CPUTestCase("lwu1",
-                Map("single-cycle" -> 5, "pipelined" -> 10, "pipelined-non-combin" -> 50, "pipelined-dual-issue" -> 10),
+                Map("single-cycle" -> 6, "pipelined" -> 10, "pipelined-non-combin" -> 50, "pipelined-dual-issue" -> 10),
                 Map(),
                                 Map(6 -> BigInt("00000000f4f5f6f7", 16)),
                                 Map(), Map()),
