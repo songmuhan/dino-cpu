@@ -23,28 +23,61 @@ class SingleCycleCPU(implicit val conf: CPUConfig) extends BaseCPU {
   val nextpc     = Module(new NextPC())
   val (cycleCount, _) = Counter(true.B, 1 << 30)
 
-  // Should be removed when wired are connected
-  control.io    := DontCare
-  registers.io  := DontCare
-  aluControl.io := DontCare
-  alu.io        := DontCare
-  immGen.io     := DontCare
-  nextpc.io     := DontCare
-  io.dmem       := DontCare
-
   //FETCH
   io.imem.address := pc
   io.imem.valid := true.B
 
-  val instruction = io.imem.instruction
   val instruction = Wire(UInt(32.W))
   when ((pc % 8.U) === 4.U) {
     instruction := io.imem.instruction(63, 32)
   } .otherwise {
     instruction := io.imem.instruction(31, 0)
   }
+  val funct3 = instruction(14, 12)
 
-  // Your code goes here
+  control.io.opcode := instruction(6, 0)
+
+  registers.io.readreg1 := instruction(19, 15)
+  registers.io.readreg2 := instruction(24, 20)
+  registers.io.writereg := instruction(11, 7)
+  registers.io.writedata := Mux(control.io.toreg, io.dmem.readdata, Mux(control.io.resultselect, immGen.io.sextImm, alu.io.result))
+  when (registers.io.writereg =/= 0.U && control.io.regwrite) {
+    registers.io.wen := true.B
+  } .otherwise {
+    registers.io.wen := false.B
+  }
+
+  immGen.io.instruction := instruction
+
+  nextpc.io.branch := control.io.branch
+  nextpc.io.jumptype := control.io.jumptype
+  nextpc.io.inputx := registers.io.readdata1
+  nextpc.io.inputy := alu.io.inputy
+  nextpc.io.funct3 := funct3
+  nextpc.io.pc := pc
+  nextpc.io.imm := immGen.io.sextImm
+
+  aluControl.io.aluop := control.io.aluop
+  aluControl.io.itype := control.io.itype
+  aluControl.io.funct7 := instruction(31, 25)
+  aluControl.io.funct3 := instruction(14, 12)
+  aluControl.io.wordinst := control.io.wordinst
+
+  alu.io.operation := aluControl.io.operation
+  alu.io.inputx := Mux(control.io.src1, pc, registers.io.readdata1)
+  alu.io.inputy := MuxCase(0.U, Array((control.io.src2 === 0.U) -> registers.io.readdata2,
+                                      (control.io.src2 === 1.U) -> immGen.io.sextImm,
+                                      (control.io.src2 === 2.U) -> 4.U))
+
+  io.dmem.address := alu.io.result
+  io.dmem.memread := ~control.io.memop(0)
+  io.dmem.memwrite := control.io.memop(0)
+  io.dmem.valid := control.io.memop(1)
+  io.dmem.maskmode := funct3(1, 0)
+  io.dmem.sext := ~funct3(2)
+  io.dmem.writedata := registers.io.readdata2
+
+  pc := nextpc.io.nextpc
 }
 
 /*
