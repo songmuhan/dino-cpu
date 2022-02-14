@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-to_submit=("src/main/scala/components/branchpred.scala")
+to_submit=("src/main/scala/components/dual/forwarding.scala"
+           "src/main/scala/components/dual/hazard.scala")
 
 # Copy the files from /autograder/submission to the proper location
 
