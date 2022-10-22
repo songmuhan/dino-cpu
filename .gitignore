@@ -354,3 +354,9 @@ simulator_run_dir
 # For gh-pages
 _site/
 Gemfile.lock
+
+
+.vscode
+project/*
+.bloop
+.metals
