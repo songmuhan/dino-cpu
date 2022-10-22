@@ -36,5 +36,50 @@ class NextPC extends Module {
   io.nextpc := io.pc + 4.U
   io.taken  := false.B
 
+
   // Your code goes here
+  when(io.branch){
+        when(io.funct3 === "b000".U){ //beq
+            when(io.inputx === io.inputy){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }.elsewhen(io.funct3 === "b001".U){ //bne
+            when(io.inputx =/= io.inputy){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }.elsewhen(io.funct3 === "b100".U){ //blt
+            when(io.inputx.asSInt < io.inputy.asSInt){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }.elsewhen(io.funct3 === "b101".U){ //bge
+            when(io.inputx.asSInt >= io.inputy.asSInt){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }.elsewhen(io.funct3 === "b110".U){ //bltu
+            when(io.inputx < io.inputy){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }.elsewhen(io.funct3 === "b111".U){ //bgeu
+            when(io.inputx >= io.inputy){
+                io.nextpc := io.pc + io.imm
+                io.taken  := true.B 
+            }
+        }
+  }
+  .elsewhen(io.jumptype === "b10".U){ //jal
+        io.nextpc := io.pc + io.imm
+        io.taken := true.B
+  }.elsewhen(io.jumptype === "b11".U){
+        io.nextpc := io.inputx + io.imm
+        io.taken := true.B
+
+  }
+
+    //printf(p"next pc finished: nextpc${io.nextpc}, taken${io.taken}\n")
+
 }

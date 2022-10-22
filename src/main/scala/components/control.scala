@@ -54,6 +54,27 @@ class Control extends Module {
       // R-format 32-bit operands
       BitPat("b0111011") -> List(false.B,  true.B, false.B,  0.U,  false.B,       0.U,      false.B,   0.U, false.B,   true.B,    true.B,   true.B),
       // Your code goes here for lab 2
+
+      // I-format
+      BitPat("b0010011") -> List(true.B,  true.B, false.B,  1.U,  false.B,       0.U,      false.B,   0.U, false.B,   true.B,    true.B,  false.B),
+      BitPat("b0011011") -> List(true.B,  true.B, false.B,  1.U,  false.B,       0.U,      false.B,   0.U, false.B,   true.B,    true.B,  true.B),
+      // Load
+      BitPat("b0000011") -> List(true.B,  false.B, false.B,  1.U,  false.B,       0.U,      false.B,  2.U, true.B,   true.B,    true.B,  false.B),
+      // lui
+      BitPat("b0110111") -> List(false.B,  false.B, false.B,  1.U,  false.B,       0.U,      true.B,  0.U, false.B,   true.B,    true.B,  false.B),
+      // auipc
+      BitPat("b0010111") -> List(false.B,  false.B, true.B,  1.U,  false.B,       0.U,      false.B,  0.U, false.B,   true.B,    true.B,  false.B),
+      // store
+      BitPat("b0100011") -> List(true.B,  false.B, false.B,  1.U,  false.B,       0.U,      false.B,  3.U, false.B,   false.B,    true.B,  false.B),
+      // branch 
+      BitPat("b1100011") -> List(false.B,  false.B, false.B,  0.U,  true.B,       0.U,      false.B,  0.U, false.B,   false.B,    true.B,  false.B),
+      // jal
+      BitPat("b1101111") -> List(false.B,  true.B, true.B,  2.U,  false.B,       2.U,      false.B,  0.U, false.B,   true.B,    true.B,  false.B),
+      // jalr
+      BitPat("b1100111") -> List(false.B,  true.B, true.B,  2.U,  false.B,       3.U,      false.B,  0.U, false.B,   true.B,    true.B,  false.B),
+      
+
+
       ) // Array
     ) // ListLookup
 
