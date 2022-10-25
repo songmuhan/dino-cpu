@@ -40,12 +40,23 @@ class HazardUnit extends Module {
   })
 
   // default
-  io.pcfromtaken  := false.B
-  io.pcstall      := false.B
-  io.if_id_stall  := false.B
-  io.id_ex_flush  := false.B
-  io.ex_mem_flush := false.B
-  io.if_id_flush  := false.B
+    io.pcfromtaken  := false.B
+    io.pcstall      := false.B
+    io.if_id_stall  := false.B
+    io.id_ex_flush  := false.B
+    io.ex_mem_flush := false.B
+    io.if_id_flush  := false.B
 
+  when(io.exmem_taken){
+    io.pcfromtaken := true.B
+    io.if_id_flush := true.B
+    io.id_ex_flush := true.B
+    io.ex_mem_flush := true.B
+
+  }.elsewhen((io.idex_memread  && io.rs1 === io.idex_rd && io.rs1 =/= 0.U) || (io.idex_memread  && io.rs2 === io.idex_rd && io.rs2 =/= 0.U)){
+    io.if_id_stall := true.B
+    io.pcstall := true.B
+    io.id_ex_flush  := true.B
+  }
   // Your code goes here
 }
